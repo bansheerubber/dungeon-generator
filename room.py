@@ -89,12 +89,6 @@ class Room:
 			if y_offset == 0:
 				y_offset = y_offset + 1
 
-			# print(y_offset)
-			# self.square = affinity.translate(
-			# 	self.square,
-			# 	xoff=0,
-			# 	yoff=y_offset
-			# )
 			self.position = (self.position[0], self.position[1] + y_offset)
 			self.set_chunk()
 			count = count + 1
@@ -394,4 +388,6 @@ class Room:
 		
 		for x in range(self.position[0], self.position[0] + self.size[0]):
 			for y in range(self.position[1], self.position[1] + self.size[1]):
-				room_map.pop((x, y))
+				position = (x, y)
+				if position in room_map:
+					room_map.pop(position)

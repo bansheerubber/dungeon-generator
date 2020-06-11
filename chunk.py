@@ -1,6 +1,6 @@
 import math
 
-CHUNK_SIZE = 15
+CHUNK_SIZE = 10
 global chunk_map # [index: Position]: Chunk
 chunk_map = {}
 
@@ -15,7 +15,9 @@ class Chunk:
 		for x in range(-1, 2): # go to 2 since range is exclusive
 			for y in range(-1, 2):
 				position = (self.position[0] + x, self.position[1] + y)
-				if position != self.position and position in self.chunk_map:
+				if position != self.position:
+					if position not in self.chunk_map:
+						self.chunk_map[position] = Chunk(position)
 					yield self.chunk_map[position]
 	
 	def all_rooms(self):
@@ -40,8 +42,22 @@ class Chunk:
 		
 		return None
 	
-	def add_room(self, room):
-		self.rooms.add(room)
+	def add_room(self, room, size=None):
+		if room not in self.rooms:
+			self.rooms.add(room)
+
+			force = False
+			if size == None:
+				if room.size[0] > room.size[1]:
+					size = room.size[0]
+				else:
+					size = room.size[1]
+			elif size > -20:
+				force = True
+
+			if size > CHUNK_SIZE or force == True:
+				for adjacent in self.adjacents():
+					adjacent.add_room(room, size - CHUNK_SIZE)
 	
 	def remove_room(self, room):
 		self.rooms.discard(room)
