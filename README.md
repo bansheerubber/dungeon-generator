@@ -1,1 +1,1 @@
-!(Dungeon)[https://bansheerubber.com/i/f/oxQEP.png]
+![Dungeon](https://bansheerubber.com/i/f/oxQEP.png)
