@@ -3,7 +3,6 @@ from room import Room
 from room import rooms
 from room import collections
 from hallway import hallways
-from line import Line
 import roomtype
 from roomtype import RoomType
 import chunk

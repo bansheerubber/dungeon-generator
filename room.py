@@ -4,7 +4,6 @@ from shapely import geometry
 from shapely import affinity
 from hallway import Hallway
 from hallway import hallway_map
-from line import Line
 import chunk
 import math
 import random
@@ -115,36 +114,6 @@ class Room:
 		for x in range(self.position[0], self.position[0] + self.size[0]):
 			for y in range(self.position[1], self.position[1] + self.size[1]):
 				image.putpixel((x + 10, y + 10), self.room_type.color)
-	
-	# checks if a line intersects this room
-	def line_intersects(self, start, end):
-		# if the line is horizontal, check our horizontal sides
-		if temp_line1.set_points(start, end).is_horizontal:
-			if temp_line2.set_points(
-				(self.position[0], self.position[1]),
-				(self.position[0], self.position[1] + self.size[1] - 1)
-			).intersects(temp_line1):
-				return True
-			
-			if temp_line2.set_points(
-				(self.position[0] + self.size[0] - 1, self.position[1]),
-				(self.position[0] + self.size[0] - 1, self.position[1] + self.size[1] - 1)
-			).intersects(temp_line1):
-				return True
-		else:
-			if temp_line2.set_points(
-				(self.position[0], self.position[1]),
-				(self.position[0] + self.size[0] - 1, self.position[1])
-			).intersects(temp_line1):
-				return True
-			
-			if temp_line2.set_points(
-				(self.position[0], self.position[1] + self.size[1] - 1),
-				(self.position[0] + self.size[0] - 1, self.position[1] + self.size[1] - 1)
-			).intersects(temp_line1):
-				return True
-		
-		return False
 	
 	def _hallway_positions(self):
 		for x in range(self.position[0], self.position[0] + self.size[0]):
