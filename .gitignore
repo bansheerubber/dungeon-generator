@@ -1,2 +1,4 @@
-m.coke-workspace
+/.vscode
+/__pycache__
+m.code-workspace
 egg.png
