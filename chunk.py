@@ -28,15 +28,9 @@ class Chunk:
 
 	# checks if a room overlaps in this chunk or any adjacent chunks
 	def overlaps(self, room):
-		for test_room in self.rooms:
+		for test_room in self.all_rooms():
 			if test_room != room and room.overlaps(test_room):
 				return test_room
-
-		# iterate through adjacent chunks
-		for chunk in self.adjacents():
-			for test_room in chunk.rooms:
-				if test_room != room and room.overlaps(test_room):
-					return test_room
 		
 		return None
 	

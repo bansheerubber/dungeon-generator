@@ -17,6 +17,7 @@ class Room:
 		self.hallways = set()
 		self.connected_rooms = set()
 		self.hallway_map = {}
+		self.chunk = None
 
 		self.is_destroyed = False
 
@@ -41,7 +42,7 @@ class Room:
 			self.settle()
 	
 	def set_chunk(self):
-		if hasattr(self, "chunk"):
+		if self.chunk != None:
 			self.chunk.remove_room(self)
 		
 		self.chunk = self.generator.get_chunk(self.position)
@@ -49,7 +50,6 @@ class Room:
 	
 	# check to see if we overlap with another room
 	def overlaps(self, room):
-		# return self.square.intersects(room.square)
 		if(
 			self.position[0] <= (room.position[0] + room.size[0])
 			and (self.position[0] + self.size[0]) >= room.position[0]
@@ -74,7 +74,6 @@ class Room:
 				if position in self.generator.room_map and self.generator.room_map[position] == self:
 					self.generator.room_map.pop(position)
 		
-		count = 0
 		for overlapping_room in self.overlapping_rooms():
 			y_offset = abs((self.size[1] + 1) - (self.position[1] - overlapping_room.position[1]))
 
@@ -83,7 +82,6 @@ class Room:
 
 			self.position = (self.position[0], self.position[1] + y_offset)
 			self.set_chunk()
-			count = count + 1
 
 		for x in range(self.position[0], self.position[0] + self.size[0]):
 			for y in range(self.position[1], self.position[1] + self.size[1]):
