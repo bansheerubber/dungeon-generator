@@ -111,7 +111,7 @@ start = time.time()
 for row in range(0, 50):
 	y = math.floor((max_y + y) / 2)
 	max_y = 0
-	for x in range(0, 1000):
+	for x in range(0, 100):
 		position = (x + random.randint(-5, 5), y + random.randint(-5, 5))
 
 		room_type = random.sample(roomtype.room_types, 1)[0]
