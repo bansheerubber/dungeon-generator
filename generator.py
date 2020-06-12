@@ -94,6 +94,11 @@ class Generator:
 		for room in self.rooms:
 			if len(room.hallways) == 0:
 				deleted_rooms.add(room)
+		
+		for collection in self.collections:
+			if collection != largest_collection:
+				for room in collection:
+					deleted_rooms.add(room)
 
 		for room in deleted_rooms:
 			room.destroy()
