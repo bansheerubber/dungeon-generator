@@ -49,7 +49,7 @@ class Generator:
 					max_y = room.position[1]
 		
 		# try to create tendrils at the end of the dungeon
-		for x in range(0, width, int(width / 10)):
+		for x in range(0, width, int(width / 5)):
 			for i in range(0, random.randint(5, 70)):
 				position = (int(x + random.randint(-5, 5)), int(y))
 
