@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-from shapely import geometry
-from shapely import affinity
+from collection import Collection
 from hallway import Hallway
 import chunk
 import math
@@ -10,14 +9,16 @@ import random
 HALLWAY_MAX_DIST = 7
 
 class Room:
-	def __init__(self, position, size, room_type, generator):
+	def __init__(self, position, room_type, generator):
 		x = position[0]
 		y = position[1]
 		self.position = position
-		self.size = size
+		self.size = room_type.size
 		self.hallways = set()
 		self.connected_rooms = set()
 		self.hallway_map = {}
+
+		self.is_destroyed = False
 
 		self.generator = generator
 
@@ -27,7 +28,7 @@ class Room:
 		self.set_chunk()
 
 		self.generator.rooms.add(self)
-		self.all_connected_rooms = None
+		self.collection = None
 
 		if room_type.force_place == False:
 			self.settle()
@@ -87,20 +88,6 @@ class Room:
 		for x in range(self.position[0], self.position[0] + self.size[0]):
 			for y in range(self.position[1], self.position[1] + self.size[1]):
 				self.generator.room_map[(x, y)] = self
-	
-	def plot(self, plotter=plt, alpha=1):
-		x = self.position[0]
-		y = self.position[1]
-		size_x = self.size[0]
-		size_y = self.size[1]
-		
-		plotter.fill(
-			*geometry.Polygon([(x, y), (x + size_x, y), (x + size_x, y + size_y), (x, y + size_y)]).exterior.xy,
-			alpha=alpha,
-			linewidth=0.2,
-			edgecolor=(0, 0, 0),
-			antialiased=False
-		)
 	
 	def draw(self, image):
 		for x in range(self.position[0], self.position[0] + self.size[0]):
@@ -299,34 +286,14 @@ class Room:
 		self.hallway_map[points[0]] = hallway
 		room.hallway_map[points[1]] = hallway
 
-		if self.all_connected_rooms == None and room.all_connected_rooms == None:
-			self.all_connected_rooms = set()
-			room.all_connected_rooms = self.all_connected_rooms
-
-			self.all_connected_rooms.add(self)
-			self.all_connected_rooms.add(room)
-
-			self.generator.collections.append(self.all_connected_rooms)
-		elif self.all_connected_rooms != None and room.all_connected_rooms == None:
-			self.all_connected_rooms.add(room)
-			room.all_connected_rooms = self.all_connected_rooms
-		elif self.all_connected_rooms == None and room.all_connected_rooms != None:
-			room.all_connected_rooms.add(self)
-			self.all_connected_rooms = room.all_connected_rooms
-		elif self.all_connected_rooms != room.all_connected_rooms:
-			# merge the sets
-			if len(self.all_connected_rooms) > len(room.all_connected_rooms):
-				self.generator.collections.remove(room.all_connected_rooms)
-				for room2 in room.all_connected_rooms:
-					self.all_connected_rooms.add(room2)
-					room2.all_connected_rooms = self.all_connected_rooms
-				room.all_connected_rooms = self.all_connected_rooms
-			else:
-				self.generator.collections.remove(self.all_connected_rooms)
-				for room2 in self.all_connected_rooms:
-					room.all_connected_rooms.add(room2)
-					room2.all_connected_rooms = room.all_connected_rooms
-				self.all_connected_rooms = room.all_connected_rooms
+		if self.collection == None and room.collection == None:
+			self.collection = Collection(self.generator).add_room(self).add_room(room)
+		elif self.collection != None and room.collection == None:
+			self.collection.add_room(room)
+		elif self.collection == None and room.collection != None:
+			room.collection.add_room(self)
+		elif self.collection != room.collection:
+			self.collection.merge(room.collection)
 
 	def place_hallways(self, max_dist=HALLWAY_MAX_DIST):
 		for (is_xaxis, room) in self._hallway_rooms():
@@ -344,8 +311,9 @@ class Room:
 		self.room_type.remove_room(self)
 		
 		self.generator.rooms.remove(self)
-		if self.all_connected_rooms != None:
-			self.all_connected_rooms.remove(self)
+		self.is_destroyed = True
+		if self.collection != None:
+			self.collection.remove_room(self)
 		
 		for hallway in self.hallways:
 			hallway.destroy()

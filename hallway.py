@@ -2,6 +2,7 @@ class Hallway:
 	def __init__(self, start, end, generator):
 		self.is_horizontal = start[1] == end[1]
 		self.generator = generator
+		self.is_destroyed = False
 
 		if self.is_horizontal:
 			if start[0] < end[0]:
@@ -36,6 +37,7 @@ class Hallway:
 	
 	def destroy(self):
 		self.generator.hallways.discard(self)
+		self.is_destroyed = True
 
 		if self.is_horizontal:
 			for x in range(self.start[0], self.end[0] + 1):
