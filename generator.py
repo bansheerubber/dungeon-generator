@@ -50,7 +50,7 @@ class Generator:
 		
 		# try to create tendrils at the end of the dungeon
 		for x in range(0, width, int(width / 10)):
-			for i in range(0, random.randint(5, 50)):
+			for i in range(0, random.randint(5, 70)):
 				position = (int(x + random.randint(-5, 5)), int(y))
 
 				room_type = random.sample(self.room_types, 1)[0]

@@ -301,8 +301,11 @@ class Room:
 
 		if self.all_connected_rooms == None and room.all_connected_rooms == None:
 			self.all_connected_rooms = set()
+			room.all_connected_rooms = self.all_connected_rooms
+
 			self.all_connected_rooms.add(self)
 			self.all_connected_rooms.add(room)
+
 			self.generator.collections.append(self.all_connected_rooms)
 		elif self.all_connected_rooms != None and room.all_connected_rooms == None:
 			self.all_connected_rooms.add(room)
