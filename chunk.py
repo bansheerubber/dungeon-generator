@@ -1,12 +1,10 @@
 import math
 
 CHUNK_SIZE = 10
-global chunk_map # [index: Position]: Chunk
-chunk_map = {}
 
 # small area containing a bunch of rooms
 class Chunk:	
-	def __init__(self, position, chunk_map=chunk_map):
+	def __init__(self, position, chunk_map):
 		self.position = position # top left of chunk
 		self.rooms = set()
 		self.chunk_map = chunk_map
@@ -17,7 +15,7 @@ class Chunk:
 				position = (self.position[0] + x, self.position[1] + y)
 				if position != self.position:
 					if position not in self.chunk_map:
-						self.chunk_map[position] = Chunk(position)
+						self.chunk_map[position] = Chunk(position, self.chunk_map)
 					yield self.chunk_map[position]
 	
 	def all_rooms(self):
@@ -63,13 +61,13 @@ class Chunk:
 		self.rooms.discard(room)
 
 # gets a chunk at a position. if there isn't one, then create one
-def get_chunk(position, chunk_map=chunk_map):
+def get_chunk(position, chunk_map):
 	normalized_position = (
 		math.floor(position[0] / CHUNK_SIZE),
 		math.floor(position[1] / CHUNK_SIZE)
 	)
 
 	if normalized_position not in chunk_map:
-		chunk_map[normalized_position] = Chunk(normalized_position)
+		chunk_map[normalized_position] = Chunk(normalized_position, chunk_map)
 	
 	return chunk_map[normalized_position]

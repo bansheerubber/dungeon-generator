@@ -2,9 +2,6 @@ import random
 import chunk
 from dist import dist
 
-global room_types
-room_types = []
-
 def add_room_type(room_type):
 	room_types.append(room_type)
 	return room_type
@@ -72,7 +69,7 @@ class RoomType:
 	
 	def can_place(self, position):
 		for condition in self.conditions:
-			if condition.rarity < random.randint(0, 100):
+			if condition.rarity < random.uniform(0, 100):
 				return False
 			
 			if condition.avoid_type != None:

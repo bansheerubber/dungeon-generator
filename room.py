@@ -3,24 +3,14 @@ import matplotlib.patches as patches
 from shapely import geometry
 from shapely import affinity
 from hallway import Hallway
-from hallway import hallway_map
 import chunk
 import math
 import random
 
-global rooms
-rooms = set()
-
-global room_map
-room_map = {}
-
-global collections
-collections = []
-
 HALLWAY_MAX_DIST = 7
 
 class Room:
-	def __init__(self, position, size, room_type):
+	def __init__(self, position, size, room_type, generator):
 		x = position[0]
 		y = position[1]
 		self.position = position
@@ -29,12 +19,14 @@ class Room:
 		self.connected_rooms = set()
 		self.hallway_map = {}
 
+		self.generator = generator
+
 		self.room_type = room_type
 		room_type.add_room(self)
 
 		self.set_chunk()
 
-		rooms.add(self)
+		self.generator.rooms.add(self)
 		self.all_connected_rooms = None
 
 		if room_type.force_place == False:
@@ -43,15 +35,15 @@ class Room:
 			for x in range(self.position[0] - 1, self.position[0] + self.size[0] + 1):
 				for y in range(self.position[1] - 1, self.position[1] + self.size[1] + 1):
 					position = (x, y)
-					if position in room_map:
-						room_map[position].settle()
+					if position in self.generator.room_map:
+						self.generator.room_map[position].settle()
 			self.settle()
 	
 	def set_chunk(self):
 		if hasattr(self, "chunk"):
 			self.chunk.remove_room(self)
 		
-		self.chunk = chunk.get_chunk(self.position)
+		self.chunk = self.generator.get_chunk(self.position)
 		self.chunk.add_room(self)
 	
 	# check to see if we overlap with another room
@@ -78,8 +70,8 @@ class Room:
 		for x in range(self.position[0], self.position[0] + self.size[0]):
 			for y in range(self.position[1], self.position[1] + self.size[1]):
 				position = (x, y)
-				if position in room_map and room_map[position] == self:
-					room_map.pop(position)
+				if position in self.generator.room_map and self.generator.room_map[position] == self:
+					self.generator.room_map.pop(position)
 		
 		count = 0
 		for overlapping_room in self.overlapping_rooms():
@@ -94,7 +86,7 @@ class Room:
 
 		for x in range(self.position[0], self.position[0] + self.size[0]):
 			for y in range(self.position[1], self.position[1] + self.size[1]):
-				room_map[(x, y)] = self
+				self.generator.room_map[(x, y)] = self
 	
 	def plot(self, plotter=plt, alpha=1):
 		x = self.position[0]
@@ -231,7 +223,7 @@ class Room:
 				point1 = random.sample(collection, 1)[0]
 				point2 = (point1[0], closest_y2)
 				
-				if point1 in hallway_map or point2 in hallway_map:
+				if point1 in self.generator.hallway_map or point2 in self.generator.hallway_map:
 					return None
 
 				# don't make a hallway if our hallway intersects another room or hallway
@@ -241,7 +233,7 @@ class Room:
 				
 				for y in iteration:
 					point = (point1[0], y)
-					if point in room_map or point in hallway_map:
+					if point in self.generator.room_map or point in self.generator.hallway_map:
 						return None
 				
 				return (point1, point2)
@@ -277,7 +269,7 @@ class Room:
 				point1 = random.sample(collection, 1)[0]
 				point2 = (closest_x2, point1[1])
 
-				if point1 in hallway_map or point2 in hallway_map:
+				if point1 in self.generator.hallway_map or point2 in self.generator.hallway_map:
 					return None
 
 				# don't make a hallway if our hallway intersects another room or hallway
@@ -287,7 +279,7 @@ class Room:
 				
 				for x in iteration:
 					point = (x, point1[1])
-					if point in room_map or point in hallway_map:
+					if point in self.generator.room_map or point in self.generator.hallway_map:
 						return None
 				
 				return (point1, point2)
@@ -297,7 +289,7 @@ class Room:
 			return None
 	
 	def _add_hallway_from_points(self, room, points):
-		hallway = Hallway(points[0], points[1])
+		hallway = Hallway(points[0], points[1], self.generator)
 		self.hallways.add(hallway)
 		room.hallways.add(hallway)
 
@@ -311,7 +303,7 @@ class Room:
 			self.all_connected_rooms = set()
 			self.all_connected_rooms.add(self)
 			self.all_connected_rooms.add(room)
-			collections.append(self.all_connected_rooms)
+			self.generator.collections.append(self.all_connected_rooms)
 		elif self.all_connected_rooms != None and room.all_connected_rooms == None:
 			self.all_connected_rooms.add(room)
 			room.all_connected_rooms = self.all_connected_rooms
@@ -321,13 +313,13 @@ class Room:
 		elif self.all_connected_rooms != room.all_connected_rooms:
 			# merge the sets
 			if len(self.all_connected_rooms) > len(room.all_connected_rooms):
-				collections.remove(room.all_connected_rooms)
+				self.generator.collections.remove(room.all_connected_rooms)
 				for room2 in room.all_connected_rooms:
 					self.all_connected_rooms.add(room2)
 					room2.all_connected_rooms = self.all_connected_rooms
 				room.all_connected_rooms = self.all_connected_rooms
 			else:
-				collections.remove(self.all_connected_rooms)
+				self.generator.collections.remove(self.all_connected_rooms)
 				for room2 in self.all_connected_rooms:
 					room.all_connected_rooms.add(room2)
 					room2.all_connected_rooms = room.all_connected_rooms
@@ -348,7 +340,7 @@ class Room:
 		self.chunk.remove_room(self)
 		self.room_type.remove_room(self)
 		
-		rooms.remove(self)
+		self.generator.rooms.remove(self)
 		if self.all_connected_rooms != None:
 			self.all_connected_rooms.remove(self)
 		
@@ -358,5 +350,5 @@ class Room:
 		for x in range(self.position[0], self.position[0] + self.size[0]):
 			for y in range(self.position[1], self.position[1] + self.size[1]):
 				position = (x, y)
-				if position in room_map:
-					room_map.pop(position)
+				if position in self.generator.room_map:
+					self.generator.room_map.pop(position)
