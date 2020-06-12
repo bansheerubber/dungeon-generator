@@ -53,7 +53,7 @@ class Room:
 			self.position[0] <= (room.position[0] + room.size[0])
 			and (self.position[0] + self.size[0]) >= room.position[0]
 			and self.position[1] <= (room.position[1] + room.size[1])
-			and (self.position[1] + self.size[1]) >= room.position[1]
+			and (self.position[1] + self.size[1] + 1) >= room.position[1]
 		):
 			return True
 		else:

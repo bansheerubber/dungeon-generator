@@ -15,7 +15,7 @@ class Condition:
 		self.max_distance = max_distance
 
 class RoomType:
-	def __init__(self, size, force_place=False, name=""):
+	def __init__(self, size, force_place=False, name="", is_special=False):
 		self.chunk_map = {}
 		self.size = size
 		self.conditions = set()
@@ -23,6 +23,7 @@ class RoomType:
 		self.color = (0, 0, 0)
 		self.force_place = force_place
 		self.name = name
+		self.is_special = is_special
 	
 	# adds a room to our room chunks
 	def add_room(self, room):

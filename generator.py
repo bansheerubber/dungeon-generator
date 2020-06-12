@@ -47,6 +47,19 @@ class Generator:
 
 				if room.position[1] > max_y:
 					max_y = room.position[1]
+		
+		# try to create tendrils at the end of the dungeon
+		for x in range(0, width, int(width / 10)):
+			for i in range(0, random.randint(5, 50)):
+				position = (int(x + random.randint(-5, 5)), int(y))
+
+				room_type = random.sample(self.room_types, 1)[0]
+				while room_type.can_place(position) == False:
+					room_type = random.sample(self.room_types, 1)[0]
+
+				size = room_type.size
+				room = Room(position, size, room_type, self)
+				
 
 		print(f"Created {len(self.rooms)} rooms in {int((time.time() - start) * 1000)}ms")
 

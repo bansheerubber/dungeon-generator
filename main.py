@@ -29,7 +29,8 @@ Shop = generator.add_room_type(
 	RoomType(
 		(3, 3),
 		force_place=True,
-		name="Shop"
+		name="Shop",
+		is_special=True,
 	)
 	#.add_rarity_condition(1)
 	.add_avoid_condition(50)
@@ -41,7 +42,8 @@ Boss = generator.add_room_type(
 	RoomType(
 		(8, 8),
 		force_place=True,
-		name="Boss"
+		name="Boss",
+		is_special=True,
 	)
 	#.add_rarity_condition(1)
 	.add_avoid_condition(200)
@@ -53,7 +55,8 @@ Spawn = generator.add_room_type(
 	RoomType(
 		(1, 1),
 		force_place=True,
-		name="Spawn"
+		name="Spawn",
+		is_special=True,
 	)
 	.add_max_distance_condition(45)
 	.add_color((255, 0, 255))
@@ -62,7 +65,8 @@ Spawn = generator.add_room_type(
 Puzzle = generator.add_room_type(
 	RoomType(
 		(3, 3),
-		name="Puzzle"
+		name="Puzzle",
+		is_special=True,
 	)
 	.add_rarity_condition(50)
 	.add_avoid_condition(15)
@@ -75,6 +79,7 @@ Maze = generator.add_room_type(
 		(14, 14),
 		name="Maze",
 		force_place=True,
+		is_special=True,
 	)
 	.add_avoid_condition(200)
 	.add_min_distance_condition(100)
@@ -86,6 +91,7 @@ MegaMaze = generator.add_room_type(
 		(25, 25),
 		name="Super Maze",
 		force_place=True,
+		is_special=True,
 	)
 	.add_rarity_condition(1)
 	.add_avoid_condition(300)
@@ -98,6 +104,7 @@ BowlingAlley = generator.add_room_type(
 		(3, 15),
 		name="Bowling Alley",
 		force_place=True,
+		is_special=True,
 	)
 	.add_rarity_condition(0.5)
 	.add_min_distance_condition(200)
