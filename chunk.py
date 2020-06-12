@@ -8,15 +8,19 @@ class Chunk:
 		self.position = position # top left of chunk
 		self.rooms = set()
 		self.chunk_map = chunk_map
+		self.adjacent_chunks = set()
 	
 	def adjacents(self):
-		for x in range(-1, 2): # go to 2 since range is exclusive
-			for y in range(-1, 2):
-				position = (self.position[0] + x, self.position[1] + y)
-				if position != self.position:
-					if position not in self.chunk_map:
-						self.chunk_map[position] = Chunk(position, self.chunk_map)
-					yield self.chunk_map[position]
+		if len(self.adjacent_chunks) == 0:
+			for x in range(-1, 2): # go to 2 since range is exclusive
+				for y in range(-1, 2):
+					position = (self.position[0] + x, self.position[1] + y)
+					if position != self.position:
+						if position not in self.chunk_map:
+							self.chunk_map[position] = Chunk(position, self.chunk_map)
+						self.adjacent_chunks.add(self.chunk_map[position])
+		
+		return self.adjacent_chunks
 	
 	def all_rooms(self):
 		for room in self.rooms:
