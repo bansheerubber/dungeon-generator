@@ -34,7 +34,8 @@ class Generator:
 		max_y = 0
 		start = time.time()
 		for row in range(0, rows):
-			y = math.floor((max_y + y) / 2)
+			percent = 0.7
+			y = math.floor((y * percent) + (max_y * (1 - percent)))
 			max_y = 0
 			for x in range(0, width):
 				position = (int(x + random.randint(-5, 5)), int(y + random.randint(-5, 5)))
