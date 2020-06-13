@@ -98,7 +98,7 @@ class Room:
 	
 	def draw(self, image):
 		color = self.room_type.color
-		if self.overwrite_color != None:
+		if self.overwrite_color != None and color == (0, 0, 0):
 			color = self.overwrite_color
 		
 		for x in range(self.position[0], self.position[0] + self.size[0]):

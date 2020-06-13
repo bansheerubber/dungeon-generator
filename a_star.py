@@ -1,5 +1,6 @@
 import math
 import heapq
+import random
 
 def distance(node1, node2):
 	return math.sqrt((node1.position[0] - node2.position[0]) ** 2 + (node1.position[1] - node2.position[1]) ** 2)
@@ -34,7 +35,9 @@ def a_star(start, goal):
 		for neighbor in current.connected_rooms:
 			temp_g_score = calc_g(g_score, current, neighbor)
 			if neighbor not in g_score or temp_g_score < g_score[neighbor]:
-				came_from[neighbor] = current
+				if neighbor not in came_from:
+					came_from[neighbor] = current
+				
 				g_score[neighbor] = calc_g(g_score, current, neighbor)
 				f_score[neighbor] = g_score[neighbor] + calc_h(neighbor, goal)
 				if neighbor not in close_set:

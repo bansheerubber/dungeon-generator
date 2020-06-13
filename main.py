@@ -4,9 +4,10 @@ from roomtype import RoomType
 generator = Generator()
 
 # create standard room types
+standard_rooms = {}
 for width in range(3, 6):
 	for height in range(3, 6):
-		generator.add_room_type(
+		standard_rooms[(width, height)] = generator.add_room_type(
 			RoomType(
 				(width, height),
 				name=f"{width}x{height}"
@@ -14,9 +15,10 @@ for width in range(3, 6):
 		)
 
 # add special megarooms
+mega_rooms = {}
 for width in range(8, 10):
 	for height in range(8, 10):
-		generator.add_room_type(
+		mega_rooms[(width, height)] = generator.add_room_type(
 			RoomType(
 				(width, height),
 				name=f"Big {width}x{height}"
@@ -111,4 +113,4 @@ BowlingAlley = generator.add_room_type(
 	.add_color((25, 25, 230))
 )
 
-generator.generate(100, 50).test_path().save_image("egg.png").save("test.dungeon", blockland=False)
+generator.generate(200, 50).save_image("egg.png").save("test.dungeon", blockland=False)

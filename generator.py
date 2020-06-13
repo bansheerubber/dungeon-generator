@@ -52,7 +52,7 @@ class Generator:
 					max_y = room.position[1]
 		
 		# try to create tendrils at the end of the dungeon
-		for x in range(0, width, 10):
+		for x in range(0, width, 20):
 			new_y = y
 			for i in range(0, random.randint(5, 70)):
 				position = (int(x + random.randint(-5, 5) + 5), int(y))
@@ -182,8 +182,17 @@ class Generator:
 
 		return self
 	
+	def _color_path(self, path):
+		for index in range(1, len(path)):
+			previous_room = path[index - 1]
+			room = path[index]
+
+			room.overwrite_color = (255, 100, 0)
+			if previous_room in room.hallway_map:
+				room.hallway_map[previous_room].overwrite_color = (255, 100, 0)
+	
 	# tries to path from spawn to the boss room
-	def test_path(self):
+	def shortest_path(self):
 		# find the boss room
 		boss = None
 		for room in self.rooms:
@@ -200,16 +209,58 @@ class Generator:
 		
 		path = a_star(spawn, boss)
 		if path != None:
-			for i in range(1, len(path)):
-				previous_room = path[i - 1]
-				room = path[i]
-
-				room.overwrite_color = (255, 100, 0)
-				if previous_room in room.hallway_map:
-					room.hallway_map[previous_room].overwrite_color = (255, 100, 0)
+			self._color_path(path)
 			
 			print(f"Path traverses {len(path)} rooms")
 		else:
 			print("Path not found")
+		
+		return self
+	
+	# tries to path to every single occurance of this room type on its way to the boss
+	def path_to_all_room_types(self, room_types):
+		rooms = []
+		chances = {}
+		for (room_type, chance) in room_types:
+			rooms = rooms + list(room_type.rooms)
+			chances[room_type] = chance
+		
+		rooms.sort(key=lambda room: room.position[1])
+
+		# remove random rooms
+		for room in rooms:
+			if room.room_type in chances and chances[room.room_type] < random.randint(0, 100):
+				rooms.remove(room)
+
+		# find the spawn room
+		spawn = None
+		for room in self.rooms:
+			if room.room_type.name == "Spawn":
+				spawn = room
+				break
+		rooms.insert(0, spawn)
+
+		# find the boss room
+		boss = None
+		for room in self.rooms:
+			if room.room_type.name == "Final Boss":
+				boss = room
+				break
+		rooms.append(boss)
+
+		total_path = []
+		last_room = rooms[0]
+		for index in range(1, len(rooms)):
+			room = rooms[index]
+
+			if room not in total_path:
+				path = a_star(last_room, room)
+				if path != None:
+					total_path = total_path + path
+				last_room = room
+		
+		print(f"Path traverses {len(total_path)} rooms")
+		
+		self._color_path(total_path)
 		
 		return self
