@@ -28,6 +28,8 @@ class RoomType:
 	def serialize(self, file):
 		file.write(self.size[0], 1)
 		file.write(self.size[1], 1)
+
+		file.write_break()
 	
 	# adds a room to our room chunks
 	def add_room(self, room):

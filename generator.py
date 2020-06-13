@@ -136,14 +136,27 @@ class Generator:
 		for room_type in self.room_types:
 			print(f"{room_type.name}: {len(room_type.rooms)}")
 		
+		return self
+	
+	def save(self, file_name, blockland=False):
 		file = File()
+
 		for room_type in self.room_types:
 			room_type.serialize(file)
+		file.write_section()
+
 		for room in self.rooms:
 			room.serialize(file)
+		file.write_section()
+
 		for hallway in self.hallways:
 			hallway.serialize(file)
-		file.save("test.dungeon")
+		file.write_section()
+
+		if blockland == False:
+			file.save(file_name)
+		else:
+			file.save_blockland(file_name)
 		
 		return self
 	
@@ -165,3 +178,5 @@ class Generator:
 			hallway.draw(image)
 
 		image.save(file_name)
+
+		return self

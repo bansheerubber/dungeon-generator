@@ -45,6 +45,8 @@ class Room:
 		file.write(self.generator.room_types.index(self.room_type), 2)
 		file.write(self.position[0], 2)
 		file.write(self.position[1], 2)
+
+		file.write_break()
 	
 	def set_chunk(self):
 		if self.chunk != None:
