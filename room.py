@@ -19,6 +19,8 @@ class Room:
 		self.hallway_map = {}
 		self.chunk = None
 
+		self.overwrite_color = None
+
 		self.is_destroyed = False
 
 		self.generator = generator
@@ -95,9 +97,13 @@ class Room:
 				self.generator.room_map[(x, y)] = self
 	
 	def draw(self, image):
+		color = self.room_type.color
+		if self.overwrite_color != None:
+			color = self.overwrite_color
+		
 		for x in range(self.position[0], self.position[0] + self.size[0]):
 			for y in range(self.position[1], self.position[1] + self.size[1]):
-				image.putpixel((x + 5, y + 5), self.room_type.color)
+				image.putpixel((x + 5, y + 5), color)
 	
 	def _hallway_positions(self):
 		for x in range(self.position[0], self.position[0] + self.size[0]):
@@ -291,6 +297,9 @@ class Room:
 		self.hallway_map[points[0]] = hallway
 		room.hallway_map[points[1]] = hallway
 
+		self.hallway_map[room] = hallway
+		room.hallway_map[self] = hallway
+
 		if self.collection == None and room.collection == None:
 			self.collection = Collection(self.generator).add_room(self).add_room(room)
 		elif self.collection != None and room.collection == None:
@@ -320,6 +329,9 @@ class Room:
 		if self.collection != None:
 			self.collection.remove_room(self)
 		
+		for neighbor in self.connected_rooms:
+			neighbor.connected_rooms.discard(self)
+		
 		for hallway in self.hallways:
 			hallway.destroy()
 		
@@ -328,3 +340,5 @@ class Room:
 				position = (x, y)
 				if position in self.generator.room_map:
 					self.generator.room_map.pop(position)
+		
+		self.position = None

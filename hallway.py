@@ -3,6 +3,7 @@ class Hallway:
 		self.is_horizontal = start[1] == end[1]
 		self.generator = generator
 		self.is_destroyed = False
+		self.overwrite_color = None
 
 		if self.is_horizontal:
 			if start[0] < end[0]:
@@ -36,12 +37,16 @@ class Hallway:
 		file.write_break()
 	
 	def draw(self, image):
+		color = (0, 0, 0)
+		if self.overwrite_color != None:
+			color = self.overwrite_color
+		
 		if self.is_horizontal:
 			for x in range(self.start[0] + 1, self.end[0]):
-				image.putpixel((x + 5, self.start[1] + 5), (0, 0, 0))
+				image.putpixel((x + 5, self.start[1] + 5), color)
 		else:
 			for y in range(self.start[1] + 1, self.end[1]):
-				image.putpixel((self.start[0] + 5, y + 5), (0, 0, 0))
+				image.putpixel((self.start[0] + 5, y + 5), color)
 	
 	def destroy(self):
 		self.generator.hallways.discard(self)

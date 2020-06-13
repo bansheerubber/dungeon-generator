@@ -6,6 +6,7 @@ from roomtype import RoomType
 from PIL import Image
 from room import Room
 from chunk import get_chunk
+from a_star import a_star
 
 class Generator:
 	def __init__(self):
@@ -179,4 +180,36 @@ class Generator:
 
 		image.save(file_name)
 
+		return self
+	
+	# tries to path from spawn to the boss room
+	def test_path(self):
+		# find the boss room
+		boss = None
+		for room in self.rooms:
+			if room.room_type.name == "Final Boss":
+				boss = room
+				break
+		
+		# find the spawn room
+		spawn = None
+		for room in self.rooms:
+			if room.room_type.name == "Spawn":
+				spawn = room
+				break
+		
+		path = a_star(spawn, boss)
+		if path != None:
+			for i in range(1, len(path)):
+				previous_room = path[i - 1]
+				room = path[i]
+
+				room.overwrite_color = (255, 100, 0)
+				if previous_room in room.hallway_map:
+					room.hallway_map[previous_room].overwrite_color = (255, 100, 0)
+			
+			print(f"Path traverses {len(path)} rooms")
+		else:
+			print("Path not found")
+		
 		return self
