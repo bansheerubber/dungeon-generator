@@ -1,6 +1,6 @@
 import math
 
-CHUNK_SIZE = 10
+CHUNK_SIZE = 15
 
 # small area containing a bunch of rooms
 class Chunk:	

@@ -25,6 +25,10 @@ class RoomType:
 		self.name = name
 		self.is_special = is_special
 	
+	def serialize(self, file):
+		file.write(self.size[0], 1)
+		file.write(self.size[1], 1)
+	
 	# adds a room to our room chunks
 	def add_room(self, room):
 		chunk.get_chunk(room.position, self.chunk_map).add_room(room)

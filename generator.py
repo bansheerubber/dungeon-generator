@@ -1,6 +1,7 @@
 import time
 import random
 import math
+from file import File
 from roomtype import RoomType
 from PIL import Image
 from room import Room
@@ -38,7 +39,7 @@ class Generator:
 			y = math.floor((y * percent) + (max_y * (1 - percent)))
 			max_y = 0
 			for x in range(0, width):
-				position = (int(x + random.randint(-5, 5)), int(y + random.randint(-5, 5)))
+				position = (int(x + random.randint(-5, 5) + 5), int(y + random.randint(-5, 5) + 5))
 
 				room_type = random.sample(self.room_types, 1)[0]
 				while room_type.can_place(position) == False:
@@ -51,14 +52,18 @@ class Generator:
 		
 		# try to create tendrils at the end of the dungeon
 		for x in range(0, width, 10):
+			new_y = y
 			for i in range(0, random.randint(5, 70)):
-				position = (int(x + random.randint(-5, 5)), int(y))
+				position = (int(x + random.randint(-5, 5) + 5), int(y))
+				test_position = (int(x + random.randint(-5, 5) + 5), int(new_y))
 
 				room_type = random.sample(self.room_types, 1)[0]
 				while room_type.can_place(position) == False:
 					room_type = random.sample(self.room_types, 1)[0]
 
-				Room(position, room_type, self)
+				room = Room(position, room_type, self)
+
+				new_y = room.position[1]
 
 		print(f"Created {len(self.rooms)} rooms in {int((time.time() - start) * 1000)}ms")
 
@@ -131,6 +136,15 @@ class Generator:
 		for room_type in self.room_types:
 			print(f"{room_type.name}: {len(room_type.rooms)}")
 		
+		file = File()
+		for room_type in self.room_types:
+			room_type.serialize(file)
+		for room in self.rooms:
+			room.serialize(file)
+		for hallway in self.hallways:
+			hallway.serialize(file)
+		file.save("test.dungeon")
+		
 		return self
 	
 	def save_image(self, file_name):
@@ -143,7 +157,7 @@ class Generator:
 			if room.position[1] + room.size[1] > image_y:
 				image_y = room.position[1] + room.size[1]
 		
-		image = Image.new("RGB", (image_x + 20, image_y + 20), color=(255,255,255,0))
+		image = Image.new("RGB", (image_x + 10, image_y + 10), color=(255,255,255,0))
 		for room in self.rooms:
 			room.draw(image)
 

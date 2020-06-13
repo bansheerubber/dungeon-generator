@@ -27,13 +27,19 @@ class Hallway:
 		
 		self.generator.hallways.add(self)
 	
+	def serialize(self, file):
+		file.write(self.start[0], 2)
+		file.write(self.start[1], 2)
+		file.write(self.end[0], 2)
+		file.write(self.end[1], 2)
+	
 	def draw(self, image):
 		if self.is_horizontal:
 			for x in range(self.start[0] + 1, self.end[0]):
-				image.putpixel((x + 10, self.start[1] + 10), (0, 0, 0))
+				image.putpixel((x + 5, self.start[1] + 5), (0, 0, 0))
 		else:
 			for y in range(self.start[1] + 1, self.end[1]):
-				image.putpixel((self.start[0] + 10, y + 10), (0, 0, 0))
+				image.putpixel((self.start[0] + 5, y + 5), (0, 0, 0))
 	
 	def destroy(self):
 		self.generator.hallways.discard(self)

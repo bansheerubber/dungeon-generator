@@ -41,6 +41,11 @@ class Room:
 						self.generator.room_map[position].settle()
 			self.settle()
 	
+	def serialize(self, file):
+		file.write(self.generator.room_types.index(self.room_type), 2)
+		file.write(self.position[0], 2)
+		file.write(self.position[1], 2)
+	
 	def set_chunk(self):
 		if self.chunk != None:
 			self.chunk.remove_room(self)
@@ -90,7 +95,7 @@ class Room:
 	def draw(self, image):
 		for x in range(self.position[0], self.position[0] + self.size[0]):
 			for y in range(self.position[1], self.position[1] + self.size[1]):
-				image.putpixel((x + 10, y + 10), self.room_type.color)
+				image.putpixel((x + 5, y + 5), self.room_type.color)
 	
 	def _hallway_positions(self):
 		for x in range(self.position[0], self.position[0] + self.size[0]):
