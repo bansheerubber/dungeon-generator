@@ -113,4 +113,4 @@ BowlingAlley = generator.add_room_type(
 	.add_color((25, 25, 230))
 )
 
-generator.generate(200, 50).save_image("egg.png").save("test.dungeon", blockland=False)
+generator.generate(200, 50).path_to_all_room_types([(Boss, 100)]).save_image("egg.png").save("test.dungeon", blockland=False)

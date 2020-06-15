@@ -48,7 +48,7 @@ class Chunk:
 					size = room.size[0]
 				else:
 					size = room.size[1]
-			elif size > -20:
+			elif size > -60: # lol idk
 				force = True
 
 			if size > CHUNK_SIZE or force == True:
