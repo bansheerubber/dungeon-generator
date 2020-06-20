@@ -1,6 +1,7 @@
 import random
 import chunk
 from dist import dist
+from tile import RoomTileCollection, NORTH, EAST, SOUTH, WEST
 
 def add_room_type(room_type):
 	room_types.append(room_type)
@@ -24,6 +25,53 @@ class RoomType:
 		self.force_place = force_place
 		self.name = name
 		self.is_special = is_special
+
+		self.collection_prefab = RoomTileCollection()
+		for x in range(0, self.size[0]):
+			for y in range(0, self.size[1]):
+				tile = self.collection_prefab.add_tile((x, y))
+				
+				wall_normal1 = None
+				wall_normal2 = None
+				if y == 0:
+					wall_normal1 = SOUTH
+					if x == self.size[0] - 1:
+						wall_normal2 = EAST
+					elif x == 0:
+						wall_normal2 = WEST
+				elif y == self.size[1] - 1:
+					wall_normal1 = NORTH
+					if x == self.size[0] - 1:
+						wall_normal2 = EAST
+					elif x == 0:
+						wall_normal2 = WEST
+
+				if wall_normal1 != None:
+					tile.add_wall(direction=wall_normal1)
+				if wall_normal2 != None:
+					tile.add_wall(direction=wall_normal2)
+				
+				# different if statement block so 1 wide/1 height rooms can be generated
+				wall_normal1 = None
+				wall_normal2 = None
+				if x == 0:
+					wall_normal1 = EAST
+					if y == self.size[1] - 1:
+						wall_normal2 = NORTH
+					elif y == 0:
+						wall_normal2 = SOUTH
+				elif x == self.size[0] - 1:
+					wall_normal1 = WEST
+					if y == self.size[1] - 1:
+						wall_normal2 = NORTH
+					elif y == 0:
+						wall_normal2 = SOUTH
+				
+				if wall_normal1 != None:
+					tile.add_wall(direction=wall_normal1)
+				if wall_normal2 != None:
+					tile.add_wall(direction=wall_normal2)
+
 	
 	def serialize(self, file):
 		file.write(self.size[0], 1)

@@ -26,6 +26,7 @@ class Room:
 		self.generator = generator
 
 		self.room_type = room_type
+		self.tile_collection = room_type.collection_prefab.clone_into_owner(self)
 		room_type.add_room(self)
 
 		self.set_chunk()
@@ -100,10 +101,12 @@ class Room:
 		color = self.room_type.color
 		if self.overwrite_color != None and color == (0, 0, 0):
 			color = self.overwrite_color
+
+		self.tile_collection.draw(image, color)
 		
-		for x in range(self.position[0], self.position[0] + self.size[0]):
-			for y in range(self.position[1], self.position[1] + self.size[1]):
-				image.putpixel((x + 5, y + 5), color)
+		# for x in range(self.position[0], self.position[0] + self.size[0]):
+		# 	for y in range(self.position[1], self.position[1] + self.size[1]):
+		# 		image.putpixel((x + 5, y + 5), color)
 	
 	def _hallway_positions(self):
 		for x in range(self.position[0], self.position[0] + self.size[0]):

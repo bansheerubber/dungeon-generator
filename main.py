@@ -1,5 +1,18 @@
+from PIL import Image
 from generator import Generator
 from roomtype import RoomType
+from room import Room
+
+from tile import RoomTileCollection, NORTH, EAST, SOUTH, WEST
+
+# image = Image.new("RGB", (50, 50), color=(255,255,255,0))
+# test = RoomTileCollection()
+# test.add_tile((0, 0)).add_wall(direction=SOUTH).add_wall(direction=EAST)
+# test.add_tile((1, 0)).add_wall(direction=SOUTH).add_wall(direction=WEST)
+# test.add_tile((0, 1)).add_wall(direction=EAST).add_wall(direction=NORTH)
+# test.add_tile((1, 1)).add_wall(direction=WEST).add_wall(direction=NORTH)
+# test.draw(image)
+# image.save("egg.png")
 
 generator = Generator()
 
