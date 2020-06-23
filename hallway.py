@@ -33,6 +33,7 @@ class Hallway:
 		file.write(self.start[1], 2)
 		file.write(self.end[0], 2)
 		file.write(self.end[1], 2)
+		file.write(int(self.is_horizontal), 1)
 
 		file.write_break()
 	

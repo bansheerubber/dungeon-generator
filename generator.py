@@ -35,8 +35,9 @@ class Generator:
 		y = 0
 		max_y = 0
 		start = time.time()
+		room_index = 0
 		for row in range(0, rows):
-			percent = 0.7
+			percent = 0.5
 			y = math.floor((y * percent) + (max_y * (1 - percent)))
 			max_y = 0
 			for x in range(0, width):
@@ -52,19 +53,19 @@ class Generator:
 					max_y = room.position[1]
 		
 		# try to create tendrils at the end of the dungeon
-		for x in range(0, width, 20):
-			new_y = y
-			for i in range(0, random.randint(5, 70)):
-				position = (int(x + random.randint(-5, 5) + 5), int(y))
-				test_position = (int(x + random.randint(-5, 5) + 5), int(new_y))
+		# for x in range(0, width, 20):
+		# 	new_y = y
+		# 	for i in range(0, random.randint(5, 70)):
+		# 		position = (int(x + random.randint(-5, 5) + 5), int(y))
+		# 		test_position = (int(x + random.randint(-5, 5) + 5), int(new_y))
 
-				room_type = random.sample(self.room_types, 1)[0]
-				while room_type.can_place(position) == False:
-					room_type = random.sample(self.room_types, 1)[0]
+		# 		room_type = random.sample(self.room_types, 1)[0]
+		# 		while room_type.can_place(position) == False:
+		# 			room_type = random.sample(self.room_types, 1)[0]
 
-				room = Room(position, room_type, self)
+		# 		room = Room(position, room_type, self)
 
-				new_y = room.position[1]
+		# 		new_y = room.position[1]
 
 		print(f"Created {len(self.rooms)} rooms in {int((time.time() - start) * 1000)}ms")
 
@@ -125,6 +126,12 @@ class Generator:
 		
 		room = Room((furthest_y_room.position[0] + random.randint(-2, 2), furthest_y + 2), Boss, self)
 		room.place_hallways(max_dist=50)
+	
+		# give rooms indices, used for file saving
+		room_index = 0
+		for room in self.rooms:
+			room.index = room_index
+			room_index = room_index + 1
 
 		if len(room.hallways) == 0:
 			print("FINAL BOSS HAS NO CONNECTIONS")
@@ -141,12 +148,22 @@ class Generator:
 			room_type.serialize(file)
 		file.write_section()
 
-		for room in self.rooms:
+		rooms = list(self.rooms)
+		rooms.sort(key=lambda room: room.index)
+
+		for room in rooms:
 			room.serialize(file)
 		file.write_section()
 
 		for hallway in self.hallways:
 			hallway.serialize(file)
+		file.write_section()
+
+		# write room connections
+		for room in rooms:
+			for neighbor in room.connected_rooms:
+				file.write(neighbor.index, 4)
+			file.write_break()
 		file.write_section()
 
 		if blockland == False:

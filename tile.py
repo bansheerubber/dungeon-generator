@@ -102,6 +102,8 @@ class RoomTileCollection:
 		return tile
 
 	def clone_into_owner(self, room):
+		return None
+		
 		new_collection = RoomTileCollection(room)
 		for tile in self.tiles:
 			new_tile = new_collection.add_tile(tile.position)
