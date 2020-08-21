@@ -16,6 +16,11 @@ from tile import RoomTileCollection, NORTH, EAST, SOUTH, WEST
 
 generator = Generator()
 
+generator.add_difficulty((-100, 75), 0)
+
+for i in range(1, 10):
+	generator.add_difficulty((75 * i, 75 + 75 * i), i)
+
 # create standard room types
 standard_rooms = {}
 for width in range(3, 6):
@@ -75,7 +80,7 @@ Spawn = generator.add_room_type(
 		name="Spawn",
 		is_special=True,
 	)
-	.add_avoid_condition(15)
+	.add_avoid_condition(5)
 	.add_max_distance_condition(45)
 	.add_color((255, 0, 255))
 )
@@ -130,4 +135,4 @@ Spawn = generator.add_room_type(
 # )
 
 # width, height
-generator.generate(45, 10).shortest_path().save_image("egg.png").save("test.dungeon", blockland=True)
+generator.generate(45, 15).shortest_path().save_image("egg.png").save("test.dungeon", blockland=True)

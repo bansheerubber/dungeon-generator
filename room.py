@@ -19,6 +19,7 @@ class Room:
 		self.hallway_map = {}
 		self.chunk = None
 		self.index = None
+		self.difficulty = -1
 
 		self.overwrite_color = None
 
@@ -44,9 +45,21 @@ class Room:
 					if position in self.generator.room_map:
 						self.generator.room_map[position].settle()
 			self.settle()
+
+		# determine difficulty from y-position
+		for difficulty in generator.difficulties:
+			if self.position[1] > difficulty[0] and self.position[1] <= difficulty[1]:
+				self.difficulty = generator.difficulties_map[difficulty]
+
+				if generator.color_by_difficulty:
+					if difficulty not in generator.difficulty_colors:
+						generator.difficulty_colors[difficulty] = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+					
+					self.overwrite_color = generator.difficulty_colors[difficulty]
 	
 	def serialize(self, file):
 		file.write(self.generator.room_types.index(self.room_type), 2)
+		file.write(self.difficulty, 2)
 		file.write(self.position[0], 2)
 		file.write(self.position[1], 2)
 

@@ -11,6 +11,8 @@ from a_star import a_star
 class Generator:
 	def __init__(self):
 		self.room_types = []
+		self.difficulties = []
+		self.difficulties_map = {}
 		self.reset()
 	
 	def get_chunk(self, position):
@@ -20,6 +22,10 @@ class Generator:
 		self.room_types.append(roomtype)
 		return roomtype
 	
+	def add_difficulty(self, range, difficulty):
+		self.difficulties.append(range)
+		self.difficulties_map[range] = difficulty
+	
 	def reset(self):
 		self.chunk_map = {}
 		self.rooms = set()
@@ -27,6 +33,8 @@ class Generator:
 		self.hallways = set()
 		self.hallway_map = {}
 		self.collections = []
+		self.color_by_difficulty = True
+		self.difficulty_colors = {}
 	
 	def generate(self, width, rows):
 		self.reset()
