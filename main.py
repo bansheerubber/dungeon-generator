@@ -29,6 +29,7 @@ for width in range(3, 6):
 			standard_rooms[(width, height)] = generator.add_room_type(
 				RoomType(
 					(width, height),
+					type=0,
 					name=f"{width}x{height}"
 				)
 			)
@@ -52,6 +53,7 @@ Shop = generator.add_room_type(
 		(2, 2),
 		force_place=True,
 		name="Shop",
+		type=1,
 		is_special=True,
 	)
 	#.add_rarity_condition(1)
@@ -78,6 +80,7 @@ Spawn = generator.add_room_type(
 		(1, 1),
 		force_place=True,
 		name="Spawn",
+		type=2,
 		is_special=True,
 	)
 	.add_avoid_condition(5)

@@ -16,7 +16,7 @@ class Condition:
 		self.max_distance = max_distance
 
 class RoomType:
-	def __init__(self, size, force_place=False, name="", is_special=False):
+	def __init__(self, size, force_place=False, name="", type=0, is_special=False):
 		self.chunk_map = {}
 		self.size = size
 		self.conditions = set()
@@ -24,6 +24,7 @@ class RoomType:
 		self.color = (0, 0, 0)
 		self.force_place = force_place
 		self.name = name
+		self.type = type
 		self.is_special = is_special
 
 		self.collection_prefab = RoomTileCollection()
@@ -76,6 +77,7 @@ class RoomType:
 	def serialize(self, file):
 		file.write(self.size[0], 1)
 		file.write(self.size[1], 1)
+		file.write(self.type, 1)
 
 		file.write_break()
 	
