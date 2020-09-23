@@ -35,6 +35,7 @@ for x in range(0, ceil_to_number(width, size), size):
 print(int(ceil_to_number(width, size) / size - 1), int(ceil_to_number(height, size) / size - 1))
 
 file = open("./tiles/tile_data", "w")
+file.write(f"{image_name}\n")
 file.write(f"{int(ceil_to_number(width, size) / size - 1)} {int(ceil_to_number(height, size) / size - 1)}\n")
 file.write(f"{width} {height}\n")
 file.write(f"{size}\n")
